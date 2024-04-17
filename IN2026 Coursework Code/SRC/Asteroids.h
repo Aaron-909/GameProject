@@ -20,7 +20,7 @@ public:
 	Asteroids(int argc, char *argv[]);
 	virtual ~Asteroids(void);
 
-	void SplitAsteroids(const uint split_asteroid);
+	void SplitAsteroid();
 
 	virtual void Start(void);
 	virtual void Stop(void);
