@@ -143,7 +143,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 
 		if (object->GetScale() == 0.2f) 
 		{
-			SplitAsteroid();
+			SplitAsteroid(object->GetPosition());
 			mAsteroidCount = mAsteroidCount + 2;
 		}
 
@@ -218,7 +218,7 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 	}
 }
 
-void Asteroids::SplitAsteroid() {
+void Asteroids::SplitAsteroid(GLVector3f Position) {
 
 	for (uint i = 0; i < 2; i++)
 	{
@@ -230,6 +230,7 @@ void Asteroids::SplitAsteroid() {
 		small_asteroid->SetBoundingShape(make_shared<BoundingSphere>(small_asteroid->GetThisPtr(), 10.0f));
 		small_asteroid->SetSprite(asteroid_sprite);
 		small_asteroid->SetScale(0.1f);
+		small_asteroid->SetPosition(Position);
 
 		mGameWorld->AddObject(small_asteroid);
 	}

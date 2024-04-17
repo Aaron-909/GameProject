@@ -20,7 +20,7 @@ public:
 	Asteroids(int argc, char *argv[]);
 	virtual ~Asteroids(void);
 
-	void SplitAsteroid();
+	void SplitAsteroid(GLVector3f Position);
 
 	virtual void Start(void);
 	virtual void Stop(void);
