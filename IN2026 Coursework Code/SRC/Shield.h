@@ -10,8 +10,13 @@ public:
 	~Shield(void);
 
 	int hitPoint;
+	bool isActive;
 
-	void activateShield();
+	bool activateShield();
+	bool DeactivateShield();
+
+	bool CollisionTest(shared_ptr<GameObject> o);
+	void OnCollision(const GameObjectList& objects);
 };
 
 

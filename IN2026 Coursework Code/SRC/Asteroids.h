@@ -21,6 +21,7 @@ public:
 	virtual ~Asteroids(void);
 
 	void SplitAsteroid(GLVector3f Position);
+	shared_ptr<GameObject> MakeShield(GLVector3f Position);
 
 	virtual void Start(void);
 	virtual void Stop(void);

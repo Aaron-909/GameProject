@@ -11,6 +11,7 @@
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
+#include "Shield.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -57,6 +58,8 @@ void Asteroids::Start()
 	Animation *explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
+
+	Animation *shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 64, 64, 64, 64, "shield_fs.png");
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
@@ -141,6 +144,9 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
 
+		shared_ptr<GameObject> shield = MakeShield(object->GetPosition());
+		mGameWorld->AddObject(shield);
+
 		if (object->GetScale() == 0.2f) 
 		{
 			SplitAsteroid(object->GetPosition());
@@ -148,6 +154,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		}
 
 		mAsteroidCount--;
+
 
 		if (mAsteroidCount <= 0) 
 		{ 
@@ -222,7 +229,7 @@ void Asteroids::SplitAsteroid(GLVector3f Position) {
 
 	for (uint i = 0; i < 2; i++)
 	{
-		Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("asteroid1");
+		Animation *anim_ptr = AnimationManager::GetInstance().GetAnimationByName("asteroid1");
 		shared_ptr<Sprite> asteroid_sprite
 			= make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 		asteroid_sprite->SetLoopAnimation(true);
@@ -316,4 +323,18 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	explosion->SetSprite(explosion_sprite);
 	explosion->Reset();
 	return explosion;
+}
+
+shared_ptr<GameObject> Asteroids::MakeShield(GLVector3f Position)
+{
+	Animation *anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shield");
+	shared_ptr<Sprite> shield_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	shield_sprite->SetLoopAnimation(true);
+	shared_ptr<GameObject> shield = make_shared<Shield>();
+	shield->SetBoundingShape(make_shared<BoundingSphere>(shield->GetThisPtr(), 10.0f));
+	shield->SetSprite(shield_sprite);
+	shield->SetScale(0.02f);
+	shield->SetPosition(Position);
+	return shield;
 }
