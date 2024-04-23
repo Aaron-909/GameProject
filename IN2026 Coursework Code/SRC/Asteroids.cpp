@@ -63,6 +63,7 @@ void Asteroids::Start()
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
+
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 

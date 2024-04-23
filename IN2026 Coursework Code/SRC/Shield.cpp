@@ -18,7 +18,7 @@ Shield::~Shield(void)
 {
 }
 
-	bool Shield::activateShield()
+/*bool Shield::ActivateShield()
 {
 	isActive = true;
 	return isActive;
@@ -28,11 +28,16 @@ bool Shield::DeactivateShield()
 {
 	isActive = false;
 	return isActive;
-}
+}*/
 
 bool Shield::CollisionTest(shared_ptr<GameObject> o)
 {
-	if (o->GetType() != GameObjectType("Spaceship")) return false;
+	if (o->GetType() != GameObjectType("Spaceship")) 
+	{
+		isActive = true;
+		return false;
+	}
+
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
 	return mBoundingShape->CollisionTest(o->GetBoundingShape());

@@ -4,6 +4,7 @@
 #include "GameUtil.h"
 #include "GameObject.h"
 #include "Shape.h"
+#include "Shield.h"
 
 class Spaceship : public GameObject
 {

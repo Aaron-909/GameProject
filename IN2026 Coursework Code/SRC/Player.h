@@ -7,6 +7,7 @@
 #include "GameObjectType.h"
 #include "IPlayerListener.h"
 #include "IGameWorldListener.h"
+#include "Shield.h"
 
 class Player : public IGameWorldListener
 {
@@ -20,10 +21,13 @@ public:
 
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
-		if (object->GetType() == GameObjectType("Spaceship")) {
+		if (object->GetType() == GameObjectType("Spaceship")) 
+		{
 			mLives -= 1;
 			FirePlayerKilled();
 		}
+		
+		
 	}
 
 	void AddListener(shared_ptr<IPlayerListener> listener)
