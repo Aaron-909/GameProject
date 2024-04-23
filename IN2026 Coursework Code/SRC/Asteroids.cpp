@@ -59,7 +59,7 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	Animation *shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 128, 128, 64, 64, "shield_fs.png");
+	Animation *shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 128, 128, 128, 128, "shield_fs.png");
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
@@ -332,9 +332,9 @@ shared_ptr<GameObject> Asteroids::MakeShield(GLVector3f Position)
 		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 	shield_sprite->SetLoopAnimation(false);
 	shared_ptr<GameObject> shield = make_shared<Shield>();
-	shield->SetBoundingShape(make_shared<BoundingSphere>(shield->GetThisPtr(), 5.0f));
+	shield->SetBoundingShape(make_shared<BoundingSphere>(shield->GetThisPtr(), 7.0f));
 	shield->SetSprite(shield_sprite);
-	shield->SetScale(0.25f);
+	shield->SetScale(0.1f);
 	shield->SetPosition(Position);
 	return shield;
 }
