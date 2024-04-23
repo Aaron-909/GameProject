@@ -95,6 +95,7 @@ void Spaceship::Shoot(void)
 
 bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
 {
+	if (o->GetType() == GameObjectType("Shield")) return mBoundingShape->CollisionTest(o->GetBoundingShape());
 	if (o->GetType() != GameObjectType("Asteroid")) return false;
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
@@ -103,5 +104,15 @@ bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
 
 void Spaceship::OnCollision(const GameObjectList &objects)
 {
+	//Iterates through objects
+	for (auto obj : objects) {
+		if (GameObjectType(obj->GetType()) == GameObjectType("Shield"))
+		{
+			//Removes shield from game world
+			mWorld->FlagForRemoval(obj);
+			//Used to just remove the shield
+			return;
+		}
+	}
 	mWorld->FlagForRemoval(GetThisPtr());
 }

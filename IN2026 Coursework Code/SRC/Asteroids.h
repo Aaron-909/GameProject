@@ -13,6 +13,7 @@
 class GameObject;
 class Spaceship;
 class GUILabel;
+class EnemyShip;
 
 class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
 {
@@ -56,6 +57,8 @@ private:
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 
+	shared_ptr<EnemyShip> mEnemyship;
+
 	uint mLevel;
 	uint mAsteroidCount;
 
@@ -64,6 +67,8 @@ private:
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
+
+	shared_ptr<GameObject> CreateEnemyship(GLVector3f Position);
 	
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
