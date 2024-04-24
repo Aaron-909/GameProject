@@ -61,6 +61,7 @@ private:
 
 	uint mLevel;
 	uint mAsteroidCount;
+	uint mEnemyCount;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
@@ -69,6 +70,7 @@ private:
 	shared_ptr<GameObject> CreateExplosion();
 
 	shared_ptr<GameObject> CreateEnemyship(GLVector3f Position);
+	shared_ptr<GameObject> Shieldbubble(GLVector3f Position);
 	
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;

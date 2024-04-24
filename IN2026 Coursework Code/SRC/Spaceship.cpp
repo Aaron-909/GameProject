@@ -4,6 +4,7 @@
 #include "Spaceship.h"
 #include "BoundingSphere.h"
 #include "Shield.h"
+#include "Animation.h"
 
 using namespace std;
 
@@ -110,6 +111,12 @@ void Spaceship::OnCollision(const GameObjectList &objects)
 		{
 			//Removes shield from game world
 			mWorld->FlagForRemoval(obj);
+
+			if (mShield) 
+			{
+				mShield->SetActive(true);
+			}
+			
 			//Used to just remove the shield
 			return;
 		}

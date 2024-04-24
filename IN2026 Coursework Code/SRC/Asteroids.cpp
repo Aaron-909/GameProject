@@ -22,6 +22,7 @@ Asteroids::Asteroids(int argc, char *argv[])
 {
 	mLevel = 0;
 	mAsteroidCount = 0;
+	mEnemyCount = 0;
 }
 
 /** Destructor. */
@@ -60,7 +61,8 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	//Animation *enemyship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("enemyship", 128, 8129, 128, 128, "enemy_fs.png");
+	Animation *shieldbubble_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shieldbubble", 128, 64, 128, 128, "shieldbubble_fs.png");
+	Animation *enemyship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("enemyship", 128, 8192, 128, 128, "enemy_fs.png");
 	Animation *shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 128, 128, 128, 128, "shield_fs.png");
 
 	// Create a spaceship and add it to the world
@@ -159,11 +161,24 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 
 		mAsteroidCount--;
 
-
 		if (mAsteroidCount <= 0) 
 		{ 
 			mGameWorld->AddObject(CreateEnemyship(object->GetPosition()));
-			SetTimer(500, START_NEXT_LEVEL); 
+		}
+	}
+
+	/*if (object->GetType() == GameObjectType("Shield"))
+	{
+		Shieldbubble(mSpaceship->GetPosition());
+	}*/
+
+	if (object->GetType() == GameObjectType("Enemyship"))
+	{
+		mEnemyCount--;
+
+		if (mEnemyCount <= 0)
+		{
+			SetTimer(500, START_NEXT_LEVEL);
 		}
 	}
 }
@@ -344,6 +359,20 @@ shared_ptr<GameObject> Asteroids::MakeShield(GLVector3f Position)
 	return shield;
 }
 
+shared_ptr<GameObject> Asteroids::Shieldbubble(GLVector3f Position)
+{
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shieldbubble");
+	shared_ptr<Sprite> shieldbubble_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	shieldbubble_sprite->SetLoopAnimation(true);
+	shared_ptr<GameObject> shieldbubble = make_shared<Shield>();
+	shieldbubble->SetSprite(shieldbubble_sprite);
+	shieldbubble->SetScale(0.5f);
+	shieldbubble->SetPosition(Position);
+
+	return shieldbubble;
+}
+
 shared_ptr<GameObject> Asteroids::CreateEnemyship(GLVector3f Position)
 {
 	// Create a raw pointer to a spaceship that can be converted to
@@ -352,12 +381,15 @@ shared_ptr<GameObject> Asteroids::CreateEnemyship(GLVector3f Position)
 	mEnemyship->SetBoundingShape(make_shared<BoundingSphere>(mEnemyship->GetThisPtr(), 4.0f));
 	shared_ptr<Shape> bullet2_shape = make_shared<Shape>("bullet2.shape");
 	mEnemyship->SetBulletShape(bullet2_shape);
-	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("enemyship");
 	shared_ptr<Sprite> enemyship_sprite =
 		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 	mEnemyship->SetSprite(enemyship_sprite);
 	mEnemyship->SetScale(0.1f);
 	mEnemyship->SetPosition(Position);
+
+	mEnemyCount++;
+
 	// Return the spaceship so it can be added to the world
 	return mEnemyship;
 

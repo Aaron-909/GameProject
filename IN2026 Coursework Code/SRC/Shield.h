@@ -16,9 +16,6 @@ public:
 	bool IsActive()const { return isActive; }
 	void SetActive(bool active) { isActive = active; }
 
-	//bool ActivateShield();
-	//bool DeactivateShield();
-
 
 	bool CollisionTest(shared_ptr<GameObject> o);
 	void OnCollision(const GameObjectList& objects);

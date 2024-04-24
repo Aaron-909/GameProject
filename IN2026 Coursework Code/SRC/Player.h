@@ -9,6 +9,8 @@
 #include "IGameWorldListener.h"
 #include "Shield.h"
 
+class Shield;
+
 class Player : public IGameWorldListener
 {
 public:
@@ -21,7 +23,7 @@ public:
 
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
-		if (object->GetType() == GameObjectType("Spaceship")) 
+		if (object->GetType() == GameObjectType("Spaceship") || !mShield->IsActive()) 
 		{
 			mLives -= 1;
 			FirePlayerKilled();
@@ -50,6 +52,8 @@ private:
 	typedef std::list< shared_ptr<IPlayerListener> > PlayerListenerList;
 
 	PlayerListenerList mListeners;
+
+	shared_ptr<Shield> mShield;
 };
 
 #endif

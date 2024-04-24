@@ -6,6 +6,8 @@
 #include "Shape.h"
 #include "Shield.h"
 
+class Shield;
+
 class Spaceship : public GameObject
 {
 public:
@@ -34,6 +36,8 @@ private:
 	shared_ptr<Shape> mSpaceshipShape;
 	shared_ptr<Shape> mThrusterShape;
 	shared_ptr<Shape> mBulletShape;
+
+	shared_ptr<Shield> mShield;
 };
 
 #endif
