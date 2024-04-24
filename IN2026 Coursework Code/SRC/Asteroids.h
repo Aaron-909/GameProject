@@ -9,11 +9,13 @@
 #include "ScoreKeeper.h"
 #include "Player.h"
 #include "IPlayerListener.h"
+#include "Shield.h"
 
 class GameObject;
 class Spaceship;
 class GUILabel;
 class EnemyShip;
+class Shield;
 
 class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
 {
@@ -56,6 +58,10 @@ private:
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
+	shared_ptr<GUILabel> mShieldLabel;
+
+	shared_ptr<Shield> mShield;
+	string Shield_status;
 
 	shared_ptr<EnemyShip> mEnemyship;
 
@@ -68,6 +74,10 @@ private:
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
+
+	void UpdateShieldStatus();
+
+	int GenerateRandomNumber(int min, int max);
 
 	shared_ptr<GameObject> CreateEnemyship(GLVector3f Position);
 	shared_ptr<GameObject> Shieldbubble(GLVector3f Position);

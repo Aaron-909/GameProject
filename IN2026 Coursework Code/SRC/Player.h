@@ -8,14 +8,16 @@
 #include "IPlayerListener.h"
 #include "IGameWorldListener.h"
 #include "Shield.h"
+#include "Spaceship.h"
 
 class Shield;
 
 class Player : public IGameWorldListener
 {
 public:
-	Player() { mLives = 3; }
+	Player() { mLives = 3; mShield = make_shared<Shield>();}
 	virtual ~Player() {}
+
 
 	void OnWorldUpdated(GameWorld* world) {}
 
@@ -23,10 +25,26 @@ public:
 
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
-		if (object->GetType() == GameObjectType("Spaceship") || !mShield->IsActive()) 
+
+		if (object->GetType() == GameObjectType("Spaceship"))
 		{
-			mLives -= 1;
-			FirePlayerKilled();
+			
+			if (!mShield->IsActive())
+			{
+				mLives -= 1;
+				FirePlayerKilled();
+			}
+			else 
+			{ 
+				FirePlayerKilled();
+				mShield->SetActive(false);
+			}
+			
+		}
+
+		if (object->GetType() == GameObjectType("Shield")) 
+		{
+			mShield->SetActive(true);
 		}
 		
 		
@@ -54,6 +72,7 @@ private:
 	PlayerListenerList mListeners;
 
 	shared_ptr<Shield> mShield;
+
 };
 
 #endif

@@ -13,6 +13,7 @@
 #include "Explosion.h"
 #include "Shield.h"
 #include "EnemyShip.h"
+#include <random>
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -23,6 +24,8 @@ Asteroids::Asteroids(int argc, char *argv[])
 	mLevel = 0;
 	mAsteroidCount = 0;
 	mEnemyCount = 0;
+
+	mShield = make_shared<Shield>();
 }
 
 /** Destructor. */
@@ -61,13 +64,12 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	Animation *shieldbubble_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shieldbubble", 128, 64, 128, 128, "shieldbubble_fs.png");
+	//Animation *shieldbubble_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shieldbubble", 128, 64, 128, 128, "shieldbubble_fs.png");
 	Animation *enemyship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("enemyship", 128, 8192, 128, 128, "enemy_fs.png");
 	Animation *shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 128, 128, 128, 128, "shield_fs.png");
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
-
 
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
@@ -143,6 +145,18 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 
 void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 {
+	if (object->GetType() == GameObjectType("Shield"))
+	{
+		mShield->SetActive(true);
+		UpdateShieldStatus();
+	}
+
+	if (object->GetType() == GameObjectType("Spaceship"))
+	{
+		mShield->SetActive(false);
+		UpdateShieldStatus();
+	}
+
 	if (object->GetType() == GameObjectType("Asteroid"))
 	{
 		shared_ptr<GameObject> explosion = CreateExplosion();
@@ -150,11 +164,20 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
 
-		shared_ptr<GameObject> shield = MakeShield(object->GetPosition());
-		mGameWorld->AddObject(shield);
+		int randomNum = GenerateRandomNumber(1, 10); // Generate a random number between 1 and 10
+		if ((randomNum % 2) == 0) 
+		{
+			//Makes shield icons when asteroids are destroyed.
+			shared_ptr<GameObject> shield = MakeShield(object->GetPosition());
+			mGameWorld->AddObject(shield);
+		}
+		
+
+		//mGameWorld->AddObject(MakeShield(object->GetPosition()));
 
 		if (object->GetScale() == 0.2f) 
 		{
+			//Splits the asteroids and keeps count.
 			SplitAsteroid(object->GetPosition());
 			mAsteroidCount = mAsteroidCount + 2;
 		}
@@ -163,6 +186,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 
 		if (mAsteroidCount <= 0) 
 		{ 
+			//Creates enemy when the asteroids are gone.
 			mGameWorld->AddObject(CreateEnemyship(object->GetPosition()));
 		}
 	}
@@ -176,6 +200,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
 		mEnemyCount--;
 
+		//New level starts when enemy is dead.
 		if (mEnemyCount <= 0)
 		{
 			SetTimer(500, START_NEXT_LEVEL);
@@ -247,6 +272,7 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 
 void Asteroids::SplitAsteroid(GLVector3f Position) {
 
+	//Splits into 2 smaller asteroids
 	for (uint i = 0; i < 2; i++)
 	{
 		Animation *anim_ptr = AnimationManager::GetInstance().GetAnimationByName("asteroid1");
@@ -284,6 +310,21 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> lives_component = static_pointer_cast<GUIComponent>(mLivesLabel);
 	mGameDisplay->GetContainer()->AddComponent(lives_component, GLVector2f(0.0f, 0.0f));
 
+	//SHIELD LABEL
+	if (mShield->IsActive())
+	{
+		Shield_status = "Active";
+	}
+	else Shield_status = "None";
+
+	mShieldLabel = make_shared<GUILabel>("Shield: " + Shield_status);
+
+	mShieldLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	shared_ptr<GUIComponent> shield_component = static_pointer_cast<GUIComponent>(mShieldLabel);
+	mGameDisplay->GetContainer()->AddComponent(shield_component, GLVector2f(0.65f, 0.0f));
+	//SHIELD LABEL
+	
+
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mGameOverLabel = shared_ptr<GUILabel>(new GUILabel("GAME OVER"));
 	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
@@ -298,6 +339,23 @@ void Asteroids::CreateGUI()
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 
 }
+
+void Asteroids::UpdateShieldStatus()
+{
+	//SHIELD LABEL
+	// Update the shield status label based on whether the shield is active or not
+	if (mShield->IsActive())
+	{
+		Shield_status = "Active";
+	}
+	else
+	{
+		Shield_status = "None";
+	}
+	mShieldLabel->SetText("Shield: " + Shield_status);
+	//SHIELD LABEL
+}
+
 
 void Asteroids::OnScoreChanged(int score)
 {
@@ -359,7 +417,7 @@ shared_ptr<GameObject> Asteroids::MakeShield(GLVector3f Position)
 	return shield;
 }
 
-shared_ptr<GameObject> Asteroids::Shieldbubble(GLVector3f Position)
+/*shared_ptr<GameObject> Asteroids::Shieldbubble(GLVector3f Position)
 {
 	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shieldbubble");
 	shared_ptr<Sprite> shieldbubble_sprite =
@@ -371,12 +429,11 @@ shared_ptr<GameObject> Asteroids::Shieldbubble(GLVector3f Position)
 	shieldbubble->SetPosition(Position);
 
 	return shieldbubble;
-}
+}*/
 
 shared_ptr<GameObject> Asteroids::CreateEnemyship(GLVector3f Position)
 {
-	// Create a raw pointer to a spaceship that can be converted to
-	// shared_ptrs of different types because GameWorld implements IRefCount
+	//Creating enemy ship
 	mEnemyship = make_shared<EnemyShip>();
 	mEnemyship->SetBoundingShape(make_shared<BoundingSphere>(mEnemyship->GetThisPtr(), 4.0f));
 	shared_ptr<Shape> bullet2_shape = make_shared<Shape>("bullet2.shape");
@@ -390,7 +447,14 @@ shared_ptr<GameObject> Asteroids::CreateEnemyship(GLVector3f Position)
 
 	mEnemyCount++;
 
-	// Return the spaceship so it can be added to the world
+	// Return the enemy ship so it can be added to the world
 	return mEnemyship;
 
+}
+
+int Asteroids::GenerateRandomNumber(int min, int max) {
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<int> distribution(min, max);
+	return distribution(gen);
 }

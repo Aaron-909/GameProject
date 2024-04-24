@@ -14,6 +14,7 @@ using namespace std;
 Spaceship::Spaceship()
 	: GameObject("Spaceship"), mThrust(0)
 {
+	mShield = make_shared<Shield>();
 }
 
 /** Construct a spaceship with given position, velocity, acceleration, angle, and rotation. */
@@ -98,6 +99,7 @@ bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
 {
 	if (o->GetType() == GameObjectType("Shield")) return mBoundingShape->CollisionTest(o->GetBoundingShape());
 	if (o->GetType() != GameObjectType("Asteroid")) return false;
+	if (o->GetType() == GameObjectType("Asteroid")) return false;
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
 	return mBoundingShape->CollisionTest(o->GetBoundingShape());
@@ -105,21 +107,18 @@ bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
 
 void Spaceship::OnCollision(const GameObjectList &objects)
 {
-	//Iterates through objects
+	//Iterates through objects to find "Shield"
 	for (auto obj : objects) {
 		if (GameObjectType(obj->GetType()) == GameObjectType("Shield"))
 		{
-			//Removes shield from game world
-			mWorld->FlagForRemoval(obj);
-
-			if (mShield) 
+			if (!mShield->IsActive())
 			{
 				mShield->SetActive(true);
 			}
 			
-			//Used to just remove the shield
 			return;
 		}
 	}
 	mWorld->FlagForRemoval(GetThisPtr());
+	mShield->SetActive(false);
 }

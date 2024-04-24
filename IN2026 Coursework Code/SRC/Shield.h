@@ -2,7 +2,6 @@
 #define __SHIELD_H__
 
 #include "GameObject.h"
-#include "Spaceship.h"
 
 class Shield : public GameObject 
 {
@@ -10,18 +9,19 @@ public:
 	Shield(void);
 	~Shield(void);
 
-	int hitPoint;
+	bool isActive;
 	
 	//Controller for the shield status
 	bool IsActive()const { return isActive; }
 	void SetActive(bool active) { isActive = active; }
 
 
-	bool CollisionTest(shared_ptr<GameObject> o);
-	void OnCollision(const GameObjectList& objects);
+	bool CollisionTest(shared_ptr<GameObject> o) override;
+	void OnCollision(const GameObjectList& objects) override;
 
 private:
-	bool isActive;
+	
+	
 };
 
 #endif
