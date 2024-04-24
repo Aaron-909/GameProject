@@ -165,7 +165,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		mGameWorld->AddObject(explosion);
 
 		int randomNum = GenerateRandomNumber(1, 10); // Generate a random number between 1 and 10
-		if ((randomNum % 2) == 0) 
+		if (randomNum == 3) 
 		{
 			//Makes shield icons when asteroids are destroyed.
 			shared_ptr<GameObject> shield = MakeShield(object->GetPosition());
@@ -198,6 +198,11 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 
 	if (object->GetType() == GameObjectType("Enemyship"))
 	{
+		shared_ptr<GameObject> explosion = CreateExplosion();
+		explosion->SetPosition(object->GetPosition());
+		explosion->SetRotation(object->GetRotation());
+		mGameWorld->AddObject(explosion);
+
 		mEnemyCount--;
 
 		//New level starts when enemy is dead.
